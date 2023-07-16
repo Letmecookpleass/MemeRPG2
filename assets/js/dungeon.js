@@ -116,7 +116,7 @@ const dungeonEvent = () => {
         dungeon.action++;
         let choices;
         let eventRoll;
-        let eventTypes = ["blessing", "curse", "treasure", "enemy", "enemy", "nothing", "nothing", "nothing", "nothing", "monarch", "shop"];
+        let eventTypes = ["blessing", "curse", "treasure", "trap", "enemy", "enemy", "nothing", "nothing", "nothing", "nothing", "monarch", "shop", "mysterious traveler"];
         if (dungeon.action > 2 && dungeon.action < 6) {
             eventTypes.push("nextroom");
         } else if (dungeon.action > 5) {
@@ -174,6 +174,24 @@ const dungeonEvent = () => {
                     ignoreEvent();
                 };
                 break;
+case "trap":
+  dungeon.status.event = true;
+  choices = `
+    <div class="decision-panel">
+      <button id="choice1">Try open the chest</button>
+      <button id="choice2">Ignore</button>
+    </div>`;
+  addDungeonLog("You found the boss room with nothing inside and saw a <i class='fa fa-toolbox'></i> Chest.", choices);
+
+  document.querySelector("#choice1").onclick = function() {
+    trapEvent();
+    dungeon.status.event = false;
+  };
+
+  document.querySelector("#choice2").onclick = function() {
+    ignoreEvent();
+  };
+  break;
             case "treasure":
                 dungeon.status.event = true;
                 choices = `
@@ -233,7 +251,32 @@ dungeon.status.event = false;
                     fleeBattle();
                 }
                 break;
-            case "blessing":
+case "mysterious traveler":
+  dungeon.status.event = true;
+  choices = `
+    <div class="decision-panel">
+      <button id="choice1">MD</button>
+      <button id="choice2">Avidek</button>
+      <button id="choice3">Void</button>
+    </div>`;
+  addDungeonLog("You encountered a Mysterious Traveler who asks you a question: 'Who is the real Hitler?'", choices);
+
+  document.querySelector("#choice1").onclick = function() {
+    choose("MD");
+    dungeon.status.event = false;
+  };
+
+  document.querySelector("#choice2").onclick = function() {
+    choose("Avidek");
+    dungeon.status.event = false;
+  };
+
+  document.querySelector("#choice3").onclick = function() {
+    choose("Void");
+    dungeon.status.event = false;
+  };
+  break;
+case "blessing":
                 eventRoll = randomizeNum(1, 2);
                 if (eventRoll == 1) {
                     dungeon.status.event = true;
@@ -411,9 +454,63 @@ dungeon.status.event = false;
 
     }
 }
+const trapEvent = () => {
+  sfxConfirm.play();
+  let eventRoll = Math.floor(Math.random() * 3) + 1;
+
+   if (eventRoll === 1) {
+    var healthLossPercentage = Math.floor(Math.random() * (20 - 10 + 1)) + 10;
+    var healthLoss = Math.floor(player.stats.hp * (healthLossPercentage / 100));
+    player.stats.hp -= healthLoss;
+    addDungeonLog("As you grab the gold, a hidden trap is triggered the boss wakes up and slash you, causing you to lose " + healthLoss + " health. Your health is now " + player.stats.hp + "/" + player.stats.hpMax + " but you succesfully run away from the monarch/boss room.");
+    playerLoadStats();
+  } else if (eventRoll === 2) {
+    var goldAmount = Math.floor(Math.random() * (500 - 100 + 1)) + 100;
+    player.gold += goldAmount;
+    addDungeonLog("You find " + goldAmount + " gold inside the chest. Your total gold is now " + player.gold + ".");
+    playerLoadStats();
+  } else if (eventRoll === 3) {
+    var healthLossPercentage = Math.floor(Math.random() * (40 - 10 + 1)) + 10;
+    var healthLoss = Math.floor(player.stats.hp * (healthLossPercentage / 100));
+    player.stats.hp -= healthLoss;
+    addDungeonLog("As you grab the gold, a hidden trap is triggered, causing you to lose " + healthLoss + " health. Your health is now " + player.stats.hp + "/" + player.stats.hpMax + ".");
+    playerLoadStats();
+  }
+}
+
+const choose = (selectedChoice) => {
+  sfxConfirm.play();
+  let eventRoll = Math.floor(Math.random() * 3) + 1;
+  let correctAnswer = '';
+
+  if (selectedChoice === 1) {
+    correctAnswer = 'MD';
+  } else if (selectedChoice === 2) {
+    correctAnswer = 'Avidek';
+  } else if (selectedChoice === 3) {
+    correctAnswer = 'Void';
+  }
+
+  if (eventRoll === 1) {
+    var healthReduction = Math.floor(player.stats.hp * 0.1);
+    player.stats.hp -= healthReduction;
+    addDungeonLog("Your answer is wrong. The Mysterious Traveler makes you feel something bad, deducting " + healthReduction + " health. The Traveler disappears.");
+  } else if (eventRoll === 2) {
+    var goldAmount = Math.floor(Math.random() * (500 - 100 + 1)) + 100;
+    player.gold += goldAmount;
+    addDungeonLog("Your answer is correct! I'm giving you " + goldAmount + " gold. And leaves" + correctAnswer + ".");
+    playerLoadStats();
+  } else if (eventRoll === 3) {
+    var healthLossPercentage = Math.floor(Math.random() * (40 - 10 + 1)) + 10;
+    var healthLoss = Math.floor(player.stats.hp * (healthLossPercentage / 100));
+    player.stats.hp -= healthLoss;
+    addDungeonLog("Not even close, you fucking idiot! The Traveler slaps you, causing " + healthLoss + " health damage. and he cums on you and leave");
+    playerLoadStats();
+  }
+}
 // Non choices dungeon event messages
 const nothingEvent = () => {
-    let eventRoll = randomizeNum(1, 8);
+    let eventRoll = randomizeNum(1, 10);
     if (eventRoll == 1) {
         addDungeonLog("You explored and found nothing.");
     } else if (eventRoll == 2) {
@@ -430,6 +527,10 @@ const nothingEvent = () => {
         addDungeonLog("You found your mother dancing on tiktok.");
     } else if (eventRoll == 8) {
         addDungeonLog("There is nothing in this area.");
+    } else if (eventRoll == 9) {
+        addDungeonLog("Someone cums on you and leave");
+    } else if (eventRoll == 10) {
+        addDungeonLog("You found an abandoned house full of hentais!");
     }
 }
 
