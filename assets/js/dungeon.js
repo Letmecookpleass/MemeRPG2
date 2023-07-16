@@ -492,16 +492,17 @@ const choose = (selectedChoice) => {
   }
 
   if (eventRoll === 1) {
-    var healthReduction = Math.floor(player.stats.hp * 0.1);
+    var healthReduction = Math.floor(player.stats.hp * 0.4);
     player.stats.hp -= healthReduction;
-    addDungeonLog("Your answer is wrong. The Mysterious Traveler makes you feel something bad, deducting " + healthReduction + " health. The Traveler disappears.");
+    addDungeonLog("Your answer is wrong. The Mysterious Traveler smash you with this hammer, deducting " + healthReduction + " health. The Traveler disappears.");
+    playerLoadStats();
   } else if (eventRoll === 2) {
-    var goldAmount = Math.floor(Math.random() * (500 - 100 + 1)) + 100;
+    var goldAmount = Math.floor(Math.random() * (1500 - 100 + 1)) + 100;
     player.gold += goldAmount;
     addDungeonLog("Your answer is correct! I'm giving you " + goldAmount + " gold. And leaves" + correctAnswer + ".");
     playerLoadStats();
   } else if (eventRoll === 3) {
-    var healthLossPercentage = Math.floor(Math.random() * (40 - 10 + 1)) + 10;
+    var healthLossPercentage = Math.floor(Math.random() * (50 - 10 + 1)) + 10;
     var healthLoss = Math.floor(player.stats.hp * (healthLossPercentage / 100));
     player.stats.hp -= healthLoss;
     addDungeonLog("Not even close, you fucking idiot! The Traveler slaps you, causing " + healthLoss + " health damage. and he cums on you and leave");
