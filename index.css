@@ -16,15 +16,13 @@ body{
 }
 #title_container{
   width: 100%;
-  height: 225px;
-
+  height: 105px;
   display: flex;
   justify-content: center;
   align-items: center;
-
-  background-color: #D64045;/*#467599;*/
-  border-bottom: 5px solid #fff;
-  box-shadow: 0 0 30px -18px #D64045;
+  background-color: black;/*#467599;*/
+  border-bottom: 2px solid #fff;
+  box-shadow: 0 0 20px -18px #D64045;
 
 }
 #title_inner_container{
